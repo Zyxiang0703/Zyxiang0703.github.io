@@ -16,6 +16,29 @@
   html,body{height:100%;overflow:hidden;}
   body{background:#1c1216;color:var(--ink);font-family:var(--sans);line-height:1.75;}
 
+  /* ============ 入场加载层（Trionn 式）============ */
+  #loader{position:fixed;inset:0;z-index:99;background:#1c1216;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;
+    transition:transform 1s cubic-bezier(.76,0,.24,1);}
+  #loader.done{transform:translateY(-101%);}
+  #loader .mascot{width:clamp(120px,15vw,170px);animation:bob 1.5s ease-in-out infinite;filter:drop-shadow(0 18px 30px rgba(209,106,138,.28));}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg);}50%{transform:translateY(-16px) rotate(4deg);}}
+  #loader .word{display:flex;font-family:var(--serif);font-size:clamp(24px,3.4vw,34px);letter-spacing:8px;color:#fff;}
+  #loader .word span{opacity:0;transform:translateY(26px);animation:letterIn .55s var(--ease) forwards;}
+  @keyframes letterIn{to{opacity:1;transform:none;}}
+  #loader .meter{width:min(240px,60vw);height:2px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden;}
+  #loader .meter i{display:block;height:100%;width:0;background:var(--pink);border-radius:99px;transition:width .15s linear;}
+  #loader .pct{font-family:var(--serif);font-size:13px;letter-spacing:3px;color:var(--pink);}
+
+  /* 封面上的吉祥物：从底部弹入，之后轻轻漂浮 */
+  .mascot-cover{position:absolute;left:5%;bottom:-6px;z-index:2;
+    transform:translateY(115%) rotate(-6deg);
+    transition:transform 1s cubic-bezier(.34,1.56,.64,1) .3s;}
+  .scene.active .mascot-cover{transform:translateY(0) rotate(0deg);}
+  .mascot-cover img{width:clamp(110px,12vw,165px);display:block;
+    filter:drop-shadow(0 14px 26px rgba(209,106,138,.3));
+    animation:bob 5s ease-in-out infinite;}
+
   /* ============ 舞台：整屏场景叠放 ============ */
   .scenes{position:relative;height:100%;width:100%;}
   .scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
@@ -145,6 +168,8 @@
 
   /* 移动端：分支改为纵向列表 */
   @media (max-width:760px){
+    .mascot-cover{left:auto;right:2%;bottom:-4px;}
+    .mascot-cover img{width:92px;}
     .hub{height:auto;width:92vw;}
     .hub-center{position:static;transform:none;display:flex;justify-content:center;}
     .hub-caption{position:static;transform:none;margin:18px 0 8px;}
@@ -163,6 +188,8 @@
       page-break-after:always;min-height:80vh;}
     .rv{opacity:1 !important;transform:none !important;}
     .progress,.counter,.brand,.glow,.back{display:none !important;}
+    #loader{display:none !important;}
+    .mascot-cover{display:none !important;}
     h2,.hub-caption h1,.node .nm{color:var(--ink) !important;}
     .hub{height:auto;}
     .hub-center{position:static;transform:none;display:flex;justify-content:center;margin-bottom:16px;}
@@ -177,6 +204,14 @@
 </head>
 <body>
 
+<!-- ============ 入场加载层 ============ -->
+<div id="loader">
+  <img class="mascot" src="media/memoji.png" alt="">
+  <div class="word" id="loadword"></div>
+  <div class="meter"><i id="loadbar"></i></div>
+  <div class="pct" id="loadpct">0%</div>
+</div>
+
 <div class="brand">YI<b>·</b>XIANG <span style="opacity:.5;font-size:11px;">个人简历 2026</span></div>
 <div class="glow" id="glow"></div>
 <span class="back" id="back" onclick="go(0)">← 返回中心</span>
@@ -184,7 +219,8 @@
 <div class="scenes">
 
   <!-- ========== SCENE 1 中心：人物居中 + 四分支 ========== -->
-  <section class="scene active" id="s1">
+  <section class="scene" id="s1">
+    <div class="mascot-cover"><img src="media/memoji.png" alt="比心的我"></div>
     <div class="hub">
       <div class="hub-center">
         <div class="avatar-ring"><img src="photo.jpg" alt="张宜翔"></div>
@@ -352,6 +388,37 @@
 <div class="counter"><b id="cur">01</b> / 05</div>
 
 <script>
+  // ============ 入场加载动画（Trionn 式）============
+  const loader=document.getElementById('loader');
+  const loadbar=document.getElementById('loadbar');
+  const loadpct=document.getElementById('loadpct');
+  const loadword=document.getElementById('loadword');
+  'YI XIANG'.split('').forEach((ch,i)=>{
+    const s=document.createElement('span');
+    s.textContent=ch===' '?'\u00A0':ch;
+    s.style.animationDelay=(i*0.06+0.15)+'s';
+    loadword.appendChild(s);
+  });
+  let cur=0,locked=true;
+  const LOCK=950;
+
+  function finishLoad(){
+    loader.classList.add('done');
+    document.querySelector('#s1').classList.add('active');
+    setTimeout(()=>{locked=false;loader.remove();},1050);
+  }
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+    finishLoad();
+  }else{
+    let p=0;
+    const t=setInterval(()=>{
+      p=Math.min(100,p+Math.random()*8+3);
+      loadpct.textContent=Math.floor(p)+'%';
+      loadbar.style.width=p+'%';
+      if(p>=100){clearInterval(t);setTimeout(finishLoad,350);}
+    },80);
+  }
+
   // 鼠标跟随粉色光晕
   const glow=document.getElementById('glow');
   let mx=innerWidth/2,my=innerHeight/2,gx=mx,gy=my;
@@ -380,8 +447,6 @@
   // 场景切换
   const scenes=[...document.querySelectorAll('.scene')];
   const names=['中心','教育经历','实习经历','个人技能','联系方式'];
-  let cur=0,locked=false;
-  const LOCK=950;
 
   const nav=document.getElementById('progress');
   scenes.forEach((s,i)=>{
