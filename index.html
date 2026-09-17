@@ -1,178 +1,192 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>张宜翔 — 在线简历</title>
-  <style>
-    :root{
-      --bg:	#fdf5f8; --card:#ffffff; --accent:	#d16a8a; --muted:#6b7280; --maxw:900px;
-      --radius:12px; font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-    body{background:linear-gradient(180deg,#fdeef4 0%,var(--bg) 40%); margin:20px; display:flex; justify-content:center; color:#111;}
-    .container{width:100%; max-width:var(--maxw); background:var(--card); border-radius:var(--radius); box-shadow:0 8px 24px rgba(12,30,60,0.08); overflow:hidden;}
-    header{display:flex; gap:20px; align-items:center; padding:28px;}
-    .avatar{width:96px;height:96px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#f2aec6); display:flex;align-items:center;justify-content:center;color:#fff;font-size:36px;font-weight:700;}
-    .head-info h1{margin:0;font-size:24px;}
-    .head-info p{margin:6px 0 0;color:var(--muted);}
-    .wrap{display:flex; gap:24px; padding:20px 28px 36px;}
-    main{flex:1;}
-    aside{width:260px;}
-    section{background:transparent; margin-bottom:18px;}
-    h2{font-size:16px;margin:0 0 10px;color:var(--accent);}
-    .card{background:#fbfdff;border-radius:10px;padding:14px; box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);} 
-    .item{margin-bottom:12px;}
-    .item .title{font-weight:600;}
-    .muted{color:var(--muted); font-size:13px;}
-    ul{margin:8px 0 0 18px; padding:0;}
-    li{margin-bottom:6px; line-height:1.45;}
-    .controls{display:flex; gap:8px; margin-left:auto;}
-    .btn{background:var(--accent); color:#fff; padding:8px 12px; border-radius:8px; border:none; cursor:pointer; font-size:13px;}
-    .btn.ghost{background:#fdeef4;color:var(--accent); border:1px solid rgba(209,106,138,0.15);}
-    footer{padding:16px 28px; text-align:center; color:var(--muted); font-size:13px; background:linear-gradient(180deg,transparent,rgba(0,0,0,0.01));}
-    /* responsive */
-    @media (max-width:880px){
-      .wrap{flex-direction:column;}
-      aside{width:100%;}
-      header{flex-direction:column;align-items:flex-start;gap:12px;}
-      .controls{margin-top:8px;}
-    }
-    /* print */
-    @media print {
-      body{background:#fff;}
-      .controls, footer {display:none;}
-      .container{box-shadow:none; border-radius:0;}
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>张宜翔 — 在线简历</title>
+<style>
+  :root{
+    --bg:#fdf5f8; --card:#ffffff; --accent:#d16a8a; --accent-soft:#fdeef4;
+    --muted:#8a7580; --text:#3d2e35; --navline:#f0d5df;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"PingFang SC","Segoe UI","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.7;
+  }
+  .layout{display:flex; min-height:100vh; max-width:1100px; margin:0 auto;}
+  /* ---------- 左侧栏 ---------- */
+  aside{
+    width:300px; flex-shrink:0; padding:56px 40px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .avatar{width:110px;height:110px;border-radius:16px;object-fit:cover;
+    box-shadow:0 6px 18px rgba(209,106,138,.25);}
+  aside h1{margin:18px 0 0;font-size:30px;letter-spacing:1px;color:var(--text);}
+  aside .role{margin:4px 0 0;color:var(--muted);font-size:15px;}
+  nav{margin-top:34px;display:flex;flex-direction:column;gap:2px;}
+  nav a{
+    display:flex;align-items:center;gap:12px;
+    padding:9px 2px;text-decoration:none;color:var(--muted);
+    font-size:13px;letter-spacing:3px;cursor:pointer;position:relative;
+    transition:color .25s;
+  }
+  nav a .bar{height:1px;width:0;background:var(--accent);transition:width .3s;}
+  nav a:hover,nav a.active{color:var(--accent);}
+  nav a:hover .bar,nav a.active .bar{width:32px;}
+  .contact{margin-top:auto;padding-top:36px;display:flex;flex-direction:column;gap:6px;}
+  .contact a{color:var(--muted);text-decoration:none;font-size:13px;transition:color .2s;}
+  .contact a:hover{color:var(--accent);}
+  /* ---------- 右侧内容 ---------- */
+  main{flex:1;padding:56px 48px 80px 24px;min-width:0;}
+  section.panel{display:none;animation:fade .4s ease;}
+  section.panel.show{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  .panel h2{font-size:15px;letter-spacing:4px;color:var(--accent);
+    border-bottom:1px solid var(--navline);padding-bottom:12px;margin:0 0 26px;font-weight:600;}
+  .card{background:var(--card);border-radius:var(--radius);padding:22px 24px;
+    margin-bottom:18px;box-shadow:0 4px 14px rgba(209,106,138,.08);}
+  .card .title{font-weight:600;font-size:16px;}
+  .card .muted{color:var(--muted);font-size:13px;margin-top:2px;}
+  .card ul{margin:10px 0 0;padding-left:18px;}
+  .card li{margin-bottom:7px;font-size:14.5px;}
+  .tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+  .tags span{background:var(--accent-soft);color:var(--accent);
+    padding:6px 14px;border-radius:999px;font-size:13px;}
+  .intent{margin-top:26px;font-size:14px;color:var(--muted);}
+  .intent b{color:var(--accent);}
+  /* ---------- 手机适配 ---------- */
+  @media (max-width:820px){
+    .layout{flex-direction:column;}
+    aside{width:100%;padding:36px 28px 10px;}
+    nav{flex-direction:row;gap:20px;flex-wrap:wrap;margin-top:22px;}
+    nav a{letter-spacing:2px;}
+    main{padding:26px 28px 60px;}
+  }
+  @media print{
+    nav{display:none;}
+    section.panel{display:block !important;}
+    .layout{flex-direction:column;max-width:100%;}
+    aside{width:100%;}
+  }
+</style>
 </head>
 <body>
-  <div class="container" role="main">
-    <header>
-      <img class="avatar" src="photo.jpg" alt="zyx照片" style="object-fit:cover;"
-      <div class="head-info">
-        <h1>张宜翔</h1>
-        <p class="muted">融合媒体及科技传播（2020.08 – 2024.12） · Hong Kong | 邮箱：zyxiang0703@gmail.com</p>
-      </div>
-      <div class="controls" style="margin-left:auto">
-        <button class="btn" onclick="window.print()">打印 / 保存为 PDF</button>
-        <button class="btn ghost" onclick="document.getElementById('theme').classList.toggle('dark')">切换主题</button>
-      </div>
-    </header>
+<div class="layout">
 
-    <div class="wrap">
-      <main>
-        <section>
-          <h2>教育背景</h2>
-          <div class="card">
-            <div class="item">
-              <div class="title">香港恒生大学 — 融合媒体及科技传播</div>
-              <div class="muted">中国香港 · 2021.08 – 2026.12</div>
-            </div>
-          </div>
-        </section>
+  <aside>
+    <img class="avatar" src="photo.jpg" alt="张宜翔的照片">
+    <h1>张宜翔</h1>
+    <p class="role">融合媒体及科技传播 · 香港</p>
 
-        <section>
-          <h2>实习经历</h2>
-          <div class="card">
-            <div class="item">
-              <div class="title">咪咕星空 — 咨询岗位实习生</div>
-              <div class="muted">中国 · 2023.06 – 2023.08</div>
-              <ul>
-                <li><strong>活动策划：</strong>参与“咪咕新年 与球星合作”电话彩铃项目，策划“mimo”与NBA球星交互动作，产出3个典型方案，最终以“篮球魔术”创意完成详细策划。</li>
-                <li><strong>视频剪辑：</strong>负责视频后期编辑（剪映），制作特效并完成素材衔接，实习期间完成3+个视频剪辑，获得经理好评。</li>
-                <li><strong>图像编辑：</strong>使用 Photoshop 完成 30+ 张图片修改，并结合“mimo”在不同场景的设计与用户交互实现。</li>
-              </ul>
-            </div>
+    <nav>
+      <a class="active" data-tab="edu"><span class="bar"></span>教育背景</a>
+      <a data-tab="work"><span class="bar"></span>实习经历</a>
+      <a data-tab="skill"><span class="bar"></span>技能与活动</a>
+    </nav>
 
-            <div class="item" style="margin-top:12px">
-              <div class="title">华润麦当劳 — 品牌形象大使</div>
-              <div class="muted">中国 · 2022.06 – 2022.08</div>
-              <ul>
-                <li><strong>线下Campaign：</strong>参与咔滋咔滋脆鸡堡新品发布会，负责创意贡献、现场秩序维护与礼品分发。</li>
-                <li><strong>品牌大使：</strong>扮演吉祥物与顾客沟通，介绍品牌并成功销售 1000+ oh麦卡。</li>
-              </ul>
-            </div>
-
-            <div class="item" style="margin-top:12px">
-              <div class="title">厦门陆海环保 — 实习助手</div>
-              <div class="muted">中国 · 2021.04 – 2021.08</div>
-              <ul>
-                <li><strong>线下Campaign：</strong>参与社区垃圾分类宣传，并负责活动拍摄。</li>
-                <li><strong>新媒体运营：</strong>撰写并排版公众号推文，协助环保文案创作。</li>
-                <li><strong>数据处理：</strong>负责数据收集与整理，使用 Excel 完成数据可视化呈现，获得认可。</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <h2>课外活动</h2>
-          <div class="card">
-            <div class="item">
-              <div class="title">HSUHK CSSA（内地学生会） — 宣传部部长</div>
-              <div class="muted">中国·香港 · 2019.09 – 2020.02</div>
-              <ul>
-                <li>协同策划大型活动：年兽活动、新春游园夜市、春节联欢晚会等，负责活动前期策划与后期复盘。</li>
-                <li>新媒体运营：负责小红书、抖音、微信公众号的内容编辑、视频剪辑与审核。</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <h2>兴趣与技能</h2>
-          <div class="card">
-            <div class="item">
-              <ul>
-                <li><strong>语言能力：</strong>英语可作为工作语言；3年全英文学习经验。</li>
-                <li><strong>计算机与工具：</strong>熟练使用 MS Office，精通 Excel、PowerPoint；熟练使用 Premiere (Pr)、Photoshop、剪映 等多媒体工具。</li>
-                <li><strong>其他：</strong>活动策划、视频与图像后期、公众号与社媒运营、数据整理与可视化。</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-      </main>
-
-      <aside>
-        <section>
-          <h2>联系方式</h2>
-          <div class="card">
-            <p class="muted">邮箱</p>
-            <div style="font-weight:600;">zyxiang0703@gmail.com</div>
-            <p class="muted" style="margin-top:10px">居住地</p>
-            <div style="font-weight:600;">中国 / 香港（可根据需要调整）</div>
-          </div>
-        </section>
-
-        <section>
-          <h2>求职意向</h2>
-          <div class="card">
-            <div class="muted">希望方向</div>
-            <div style="margin-top:6px">活动策划 / 新媒体运营 / 视频剪辑 & 后期 / UX 内容创作</div>
-          </div>
-        </section>
-
-        <section>
-          <h2>证书 & 补充</h2>
-          <div class="card">
-            <ul>
-              <li>可根据需要添加 HSK、课程或项目链接</li>
-              <li>可附加作品集链接（视频/设计/公众号）</li>
-            </ul>
-          </div>
-        </section>
-      </aside>
+    <div class="contact">
+      <a href="mailto:zyxiang0703@gmail.com">zyxiang0703@gmail.com</a>
+      <a href="https://github.com/Zyxiang0703" target="_blank">github.com/Zyxiang0703</a>
     </div>
+  </aside>
 
-    <footer>
-      已根据你提供的信息生成简历模板 — 保存为 index.html 后即可在线分享或部署到 GitHub Pages。
-    </footer>
-  </div>
+  <main>
+    <!-- 教育 -->
+    <section class="panel show" id="edu">
+      <h2>教育背景</h2>
+      <div class="card">
+        <div class="title">香港恒生大学 — 融合媒体及科技传播</div>
+        <div class="muted">中国香港 · 2020.08 – 2024.12</div>
+        <p style="font-size:14.5px;margin:12px 0 0;">
+          课程涵盖多媒体制作、新媒体运营、传播技术与内容创作等方向，具备全英文学习经验（3 年）。
+        </p>
+      </div>
+      <div class="intent">求职方向：<b>活动策划 / 新媒体运营 / 视频剪辑与后期 / UX 内容创作</b></div>
+    </section>
 
-  <script id="theme">
-    // 简单示例：可扩展为暗色主题或更多交互
-    (function(){/*占位，保持可扩展*/})();
-  </script>
+    <!-- 实习 -->
+    <section class="panel" id="work">
+      <h2>实习经历</h2>
+
+      <div class="card">
+        <div class="title">咪咕星空 — 咨询岗位实习生</div>
+        <div class="muted">中国 · 2023.06 – 2023.08</div>
+        <ul>
+          <li><b>活动策划：</b>参与"咪咕新年 与球星合作"电话彩铃项目，策划"mimo"与 NBA 球星交互动作，产出 3 个典型方案，最终以"篮球魔术"创意完成详细策划。</li>
+          <li><b>视频剪辑：</b>负责视频后期编辑（剪映），制作特效并完成素材衔接，实习期间完成 3+ 个视频剪辑，获得经理好评。</li>
+          <li><b>图像编辑：</b>使用 Photoshop 完成 30+ 张图片修改，并结合"mimo"在不同场景的设计与用户交互实现。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="title">华润麦当劳 — 品牌形象大使</div>
+        <div class="muted">中国 · 2022.06 – 2022.08</div>
+        <ul>
+          <li><b>线下 Campaign：</b>参与咔滋咔滋脆鸡堡新品发布会，负责创意贡献、现场秩序维护与礼品分发。</li>
+          <li><b>品牌大使：</b>扮演吉祥物与顾客沟通，介绍品牌并成功销售 1000+ oh麦卡。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="title">厦门陆海环保 — 实习助手</div>
+        <div class="muted">中国 · 2021.04 – 2021.08</div>
+        <ul>
+          <li><b>线下 Campaign：</b>参与社区垃圾分类宣传，并负责活动拍摄。</li>
+          <li><b>新媒体运营：</b>撰写并排版公众号推文，协助环保文案创作。</li>
+          <li><b>数据处理：</b>负责数据收集与整理，使用 Excel 完成数据可视化呈现，获得认可。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 技能 -->
+    <section class="panel" id="skill">
+      <h2>技能与活动</h2>
+
+      <div class="card">
+        <div class="title">兴趣与技能</div>
+        <div class="tags">
+          <span>剪映</span><span>Premiere</span><span>Photoshop</span>
+          <span>Excel 数据可视化</span><span>PowerPoint</span>
+          <span>公众号运营</span><span>活动策划</span><span>英语工作语言</span>
+        </div>
+        <ul>
+          <li><b>多媒体：</b>熟练使用 Premiere、Photoshop、剪映进行视频与图像后期。</li>
+          <li><b>运营：</b>小红书、抖音、微信公众号的内容编辑、剪辑与审核。</li>
+          <li><b>语言：</b>英语可作为工作语言，3 年全英文学习经验。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="title">HSUHK CSSA（内地学生会）— 宣传部部长</div>
+        <div class="muted">中国香港 · 2019.09 – 2020.02</div>
+        <ul>
+          <li>协同策划大型活动：年兽活动、新春游园夜市、春节联欢晚会等，负责活动前期策划与后期复盘。</li>
+          <li>负责新媒体矩阵的内容编辑、视频剪辑与审核。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="title">证书与补充</div>
+        <ul>
+          <li>可根据需要添加 HSK、课程或项目链接</li>
+          <li>可附加作品集链接（视频 / 设计 / 公众号）</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+  const links = document.querySelectorAll('nav a');
+  const panels = document.querySelectorAll('.panel');
+  links.forEach(a => a.addEventListener('click', () => {
+    links.forEach(x => x.classList.remove('active'));
+    a.classList.add('active');
+    panels.forEach(p => p.classList.toggle('show', p.id === a.dataset.tab));
+  }));
+</script>
 </body>
 </html>
