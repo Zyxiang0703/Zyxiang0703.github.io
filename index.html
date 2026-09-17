@@ -83,9 +83,16 @@
     padding:20px 8px;margin:22px 0;text-align:center;}
   .contact b{color:var(--pink);}
 
-  /* ============ 右侧进度导航 ============ */
+  /* ============ 鼠标跟随粉色光晕 ============ */
+  .glow{position:fixed;left:0;top:0;width:340px;height:340px;border-radius:50%;
+    background:radial-gradient(circle,rgba(209,106,138,.16) 0%,rgba(209,106,138,.06) 40%,transparent 70%);
+    pointer-events:none;z-index:5;transform:translate(-50%,-50%);
+    transition:opacity .4s;mix-blend-mode:screen;}
+  @media (hover:none){.glow{display:none;}}
+
+  /* ============ 右侧进度导航（纯指示，不需点击）============ */
   .progress{position:fixed;right:26px;top:50%;transform:translateY(-50%);
-    display:flex;flex-direction:column;gap:16px;z-index:10;}
+    display:flex;flex-direction:column;gap:16px;z-index:10;pointer-events:none;}
   .dot{width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(255,255,255,.35);
     cursor:pointer;transition:all .35s var(--ease);position:relative;}
   .dot.on{background:var(--pink);border-color:var(--pink);transform:scale(1.35);
@@ -249,23 +256,35 @@
 
 </div>
 
+<!-- 鼠标跟随光晕 -->
+<div class="glow" id="glow"></div>
+
 <!-- 右侧进度导航 -->
 <nav class="progress" id="progress"></nav>
 <div class="counter"><b id="cur">01</b> / 04</div>
 
 <script>
+  // 鼠标跟随粉色光晕（平滑缓动跟随）
+  const glow=document.getElementById('glow');
+  let mx=innerWidth/2,my=innerHeight/2,gx=mx,gy=my;
+  window.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  (function loop(){
+    gx+=(mx-gx)*0.08; gy+=(my-gy)*0.08;   // 缓动：光晕慢慢追上鼠标
+    glow.style.left=gx+'px'; glow.style.top=gy+'px';
+    requestAnimationFrame(loop);
+  })();
+
   const scenes=[...document.querySelectorAll('.scene')];
   const names=['封面','教育背景','实习经历','技能与联系'];
   let cur=0,locked=false;
   const LOCK=950; // 换幕动画期间的锁，防止连滚跳页
 
-  // 生成右侧圆点
+  // 生成右侧圆点（纯指示器）
   const nav=document.getElementById('progress');
   scenes.forEach((s,i)=>{
     const d=document.createElement('div');
     d.className='dot'+(i===0?' on':'');
     d.title=names[i];
-    d.onclick=()=>go(i);
     nav.appendChild(d);
   });
   const dots=[...nav.children];
