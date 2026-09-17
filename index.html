@@ -83,6 +83,36 @@
     padding:20px 8px;margin:22px 0;text-align:center;}
   .contact b{color:var(--pink);}
 
+  /* ============ 校园胶片放映厅 ============ */
+  .cinema{margin:6px 0 22px;}
+  .cinema-label{font-size:11px;letter-spacing:4px;color:var(--pink);margin-bottom:10px;text-align:center;}
+  .filmstrip{display:flex;gap:0;overflow-x:auto;overflow-y:hidden;
+    scroll-snap-type:x mandatory;cursor:grab;user-select:none;
+    background:#0d0709;border-radius:8px;padding:16px 0;
+    box-shadow:0 14px 40px rgba(0,0,0,.4);position:relative;
+    /* 胶片齿孔 */
+    background-image:
+      repeating-linear-gradient(90deg,transparent 0 14px,rgba(255,255,255,.28) 14px 26px,transparent 26px 40px),
+      linear-gradient(#0d0709,#0d0709);
+    background-size:100% 10px,100% 100%;
+    background-position:0 4px,0 0;
+    background-repeat:no-repeat;
+    scrollbar-width:none;}
+  .filmstrip::-webkit-scrollbar{display:none;}
+  .filmstrip.dragging{cursor:grabbing;}
+  .filmstrip::before,.filmstrip::after{content:"";position:absolute;left:0;right:0;height:10px;
+    background:repeating-linear-gradient(90deg,transparent 0 14px,rgba(255,255,255,.28) 14px 26px,transparent 26px 40px);
+    pointer-events:none;}
+  .filmstrip::before{top:4px;}
+  .filmstrip::after{bottom:4px;}
+  .frame{flex:0 0 auto;scroll-snap-align:center;padding:0 8px;}
+  .frame img,.frame video{height:min(300px,34vh);width:auto;max-width:78vw;
+    object-fit:cover;border-radius:3px;background:#000;
+    box-shadow:0 4px 18px rgba(0,0,0,.5);
+    transition:transform .35s var(--ease),box-shadow .35s var(--ease);}
+  .frame img:hover,.frame video:hover{transform:scale(1.03) translateY(-3px);
+    box-shadow:0 14px 34px rgba(209,106,138,.35);}
+
   /* ============ 鼠标跟随粉色光晕 ============ */
   .glow{position:fixed;left:0;top:0;width:340px;height:340px;border-radius:50%;
     background:radial-gradient(circle,rgba(209,106,138,.16) 0%,rgba(209,106,138,.06) 40%,transparent 70%);
@@ -125,6 +155,10 @@
     .progress,.counter,.brand,.scroll-hint{display:none !important;}
     h2,.cover-left h1{color:var(--ink) !important;}
     .bgnum{display:none;}
+    .filmstrip{flex-wrap:wrap;overflow:visible;gap:12px;background:#fff;
+      background-image:none;justify-content:center;cursor:default;}
+    .filmstrip::before,.filmstrip::after{display:none;}
+    .frame img,.frame video{height:auto;max-width:44%;}
   }
 </style>
 </head>
@@ -156,9 +190,21 @@
       <div class="crumb rv">CHAPTER 01 · EDUCATION</div>
       <h2 class="rv">香港恒生大学</h2>
       <div class="lede rv">融合媒体及科技传播 · 2020.08 – 2024.12 · 中国香港</div>
-      <div class="card rv">
-        <p>课程涵盖多媒体制作、新媒体运营、传播技术与内容创作等方向。三年全英文学习经历，让我习惯在不同语言与文化之间切换视角：既能做扎实的调研与写作，也能上手剪辑与视觉表达。</p>
+
+      <!-- 校园胶片放映厅 -->
+      <div class="cinema rv">
+        <div class="cinema-label">-campus film- 校园胶片 · 拖动浏览</div>
+        <div class="filmstrip" id="filmstrip">
+          <div class="frame"><img src="media/edu-1-graduation.jpg" alt="毕业袍合影" loading="lazy"></div>
+          <div class="frame"><img src="media/edu-2-seaside.jpg" alt="海边合影" loading="lazy"></div>
+          <div class="frame"><video src="media/edu-clip1.mov" controls preload="metadata" playsinline></video></div>
+          <div class="frame"><img src="media/edu-3-vintage.jpg" alt="中古店合影" loading="lazy"></div>
+          <div class="frame"><img src="media/edu-4-print.jpg" alt="拓印课堂" loading="lazy"></div>
+          <div class="frame"><img src="media/edu-5-greenscreen.jpg" alt="绿幕拍摄" loading="lazy"></div>
+          <div class="frame"><video src="media/edu-clip2.mov" controls preload="none" playsinline></video></div>
+        </div>
       </div>
+
       <div class="card rv">
         <div class="title">HSUHK CSSA（内地学生会）— 宣传部部长</div>
         <p style="font-size:14px;">从 0 到 1 策划多场大型活动的传播方案，确定了我喜欢"把内容做出来，再让它被看见"的全过程。</p>
@@ -273,6 +319,24 @@
     glow.style.left=gx+'px'; glow.style.top=gy+'px';
     requestAnimationFrame(loop);
   })();
+
+  // 胶片拖动浏览（鼠标按住左右拖）
+  const strip=document.getElementById('filmstrip');
+  let down=false,sx=0,sl=0,moved=false;
+  strip.addEventListener('mousedown',e=>{
+    if(e.target.tagName==='VIDEO')return; // 不干扰视频控制条
+    down=true;moved=false;sx=e.pageX;sl=strip.scrollLeft;
+    strip.classList.add('dragging');
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!down)return;
+    const dx=e.pageX-sx;
+    if(Math.abs(dx)>4)moved=true;
+    strip.scrollLeft=sl-dx;
+  });
+  window.addEventListener('mouseup',()=>{down=false;strip.classList.remove('dragging');});
+  // 防止拖动结束时误触
+  strip.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();moved=false;}},true);
 
   const scenes=[...document.querySelectorAll('.scene')];
   const names=['封面','教育背景','实习经历','技能与联系'];
