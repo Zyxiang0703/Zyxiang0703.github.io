@@ -21,7 +21,7 @@
   .scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
     opacity:0;visibility:hidden;transform:translateY(6vh);
     transition:opacity .8s var(--ease),transform .8s var(--ease),visibility 0s .8s;}
-  .scene.active{opacity:1;visibility:visible;transform:none;transition-delay:0s,0s,0s;z-index:2;}
+  .scene.active{opacity:1;visibility:visible;transform:none;z-index:2;}
   .scene.leaving{opacity:0;transform:translateY(-6vh);z-index:1;}
   .inner{width:min(1080px,92vw);max-height:88vh;overflow-y:auto;overscroll-behavior:contain;
     padding:24px 10px;scrollbar-width:thin;scrollbar-color:var(--pink) transparent;}
@@ -29,40 +29,59 @@
   .inner::-webkit-scrollbar-thumb{background:var(--pink);border-radius:99px;}
 
   /* 子元素错落入场 */
-  .scene .rv{opacity:0;transform:translateY(34px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
+  .rv{opacity:0;transform:translateY(34px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
   .scene.active .rv{opacity:1;transform:none;}
   .scene.active .rv:nth-child(1),.scene.active .st1{transition-delay:.12s;}
   .scene.active .rv:nth-child(2),.scene.active .st2{transition-delay:.24s;}
   .scene.active .rv:nth-child(3),.scene.active .st3{transition-delay:.36s;}
   .scene.active .rv:nth-child(4),.scene.active .st4{transition-delay:.48s;}
   .scene.active .rv:nth-child(5),.scene.active .st5{transition-delay:.60s;}
-  .scene.active .rv:nth-child(6),.scene.active .st6{transition-delay:.72s;}
-  .scene.active .card{transition-delay:.34s;}
-  .scene.active .card+.card{transition-delay:.44s;}
-  .scene.active .card+.card+.card{transition-delay:.54s;}
-  .scene.active .card+.card+.card+.card{transition-delay:.64s;}
 
-  /* ============ 巨大编号水印 ============ */
-  .bgnum{position:absolute;right:-1vw;top:50%;transform:translateY(-50%);
-    font-family:var(--serif);font-size:clamp(200px,34vw,520px);font-weight:700;
-    color:rgba(209,106,138,.08);line-height:1;pointer-events:none;user-select:none;}
+  /* ============ 鼠标跟随粉色光晕 ============ */
+  .glow{position:fixed;left:0;top:0;width:340px;height:340px;border-radius:50%;
+    background:radial-gradient(circle,rgba(209,106,138,.16) 0%,rgba(209,106,138,.06) 40%,transparent 70%);
+    pointer-events:none;z-index:5;transform:translate(-50%,-50%);mix-blend-mode:screen;}
+  @media (hover:none){.glow{display:none;}}
 
-  /* ============ 封面 ============ */
-  #s1 .inner{display:flex;align-items:center;gap:6vw;max-height:90vh;overflow:visible;}
-  .cover-left{flex:1;}
-  .kicker{font-size:12px;letter-spacing:6px;color:var(--pink);margin-bottom:18px;}
-  .cover-left h1{font-family:var(--serif);font-size:clamp(56px,8.5vw,110px);line-height:1.05;color:#fff;}
-  .cover-left h1 em{font-style:normal;color:var(--pink);}
-  .subline{margin-top:16px;color:rgba(255,255,255,.75);letter-spacing:4px;font-size:14px;}
-  .desc{margin-top:22px;color:rgba(255,255,255,.6);font-size:13.5px;max-width:400px;line-height:1.9;}
-  .cover-img{width:clamp(180px,22vw,280px);aspect-ratio:3/4;object-fit:cover;
-    border:6px solid var(--pink);box-shadow:0 24px 60px rgba(209,106,138,.35);flex-shrink:0;}
-  .scroll-hint{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);
-    color:rgba(255,255,255,.55);font-size:11px;letter-spacing:3px;display:flex;
-    flex-direction:column;align-items:center;gap:8px;pointer-events:none;}
-  .scroll-hint::after{content:"";width:1px;height:36px;background:linear-gradient(var(--pink),transparent);
-    animation:drip 1.6s infinite var(--ease);}
-  @keyframes drip{from{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform-origin:bottom;}to{transform:scaleY(0);transform-origin:bottom;}}
+  /* ============ 中心舞台：人物精确居中 + 四节点悬浮 ============ */
+  .hub{position:relative;width:min(900px,92vw);height:min(74vh,660px);--av:clamp(130px,15vw,176px);}
+  /* 照片：页面正中心 */
+  .hub-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;}
+  /* 姓名与方向：绝对定位挂在照片下方，不影响照片居中 */
+  .hub-caption{position:absolute;left:50%;top:calc(50% + var(--av) / 2 + 18px);
+    transform:translateX(-50%);text-align:center;z-index:3;}
+  .avatar-ring{position:relative;width:var(--av);aspect-ratio:1;border-radius:50%;
+    padding:5px;background:linear-gradient(135deg,var(--pink),#f2aec6,var(--pink));
+    box-shadow:0 0 0 1px rgba(209,106,138,.3),0 18px 50px rgba(209,106,138,.35);}
+  .avatar-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;background:#2a1b21;}
+  .avatar-ring::after{content:"";position:absolute;inset:-16px;border-radius:50%;
+    border:1px solid rgba(209,106,138,.35);animation:pulse 3.2s infinite var(--ease);}
+  @keyframes pulse{0%{transform:scale(.94);opacity:.9;}70%{transform:scale(1.12);opacity:0;}100%{opacity:0;}}
+  .hub-caption h1{font-family:var(--serif);font-size:clamp(22px,2.6vw,32px);color:#fff;line-height:1.2;}
+  .hub-caption .role{font-size:11px;letter-spacing:4px;color:var(--pink);margin-top:6px;}
+
+  /* 分支节点：无连线，悬浮排布 */
+  .node{position:absolute;z-index:4;transform:translate(-50%,-50%);cursor:pointer;
+    display:flex;align-items:center;gap:10px;padding:14px 24px;border-radius:999px;
+    background:rgba(255,255,255,.06);border:1px solid rgba(209,106,138,.45);
+    backdrop-filter:blur(6px);transition:background .35s var(--ease),border-color .35s var(--ease),
+      box-shadow .35s var(--ease),scale .35s var(--ease);
+    animation:float 6s ease-in-out infinite;}
+  .n-right{animation-delay:-1.5s;}
+  .n-bottom{animation-delay:-3s;}
+  .n-left{animation-delay:-4.5s;}
+  @keyframes float{0%,100%{translate:0 0;}50%{translate:0 -9px;}}
+  .node:hover{background:var(--pink);border-color:var(--pink);scale:1.06;
+    box-shadow:0 12px 34px rgba(209,106,138,.4);animation-play-state:paused;}
+  .node .no{font-family:var(--serif);font-size:12px;color:var(--pink);transition:color .3s;}
+  .node .nm{font-size:15px;font-weight:600;color:#fff;white-space:nowrap;display:block;}
+  .node:hover .no{color:rgba(255,255,255,.75);}
+  .node small{display:block;font-size:9.5px;letter-spacing:2px;color:rgba(255,255,255,.45);font-weight:400;line-height:1.4;}
+  .node:hover small{color:rgba(255,255,255,.8);}
+  .n-top{left:50%;top:6%;}
+  .n-right{left:88%;top:50%;}
+  .n-bottom{left:50%;top:94%;}
+  .n-left{left:12%;top:50%;}
 
   /* ============ 内容页 ============ */
   .crumb{font-size:12px;letter-spacing:5px;color:var(--pink);margin-bottom:10px;}
@@ -74,6 +93,7 @@
   .card .muted{color:var(--muted);font-size:12.5px;margin:2px 0 8px;}
   .card ul{padding-left:18px;font-size:14px;}
   .card li{margin-bottom:6px;}
+  .card p{font-size:14.5px;}
   .tags{display:flex;flex-wrap:wrap;gap:9px;margin-top:8px;}
   .tags span{background:var(--pink-soft);color:var(--pink-deep);padding:5px 15px;
     border-radius:999px;font-size:12.5px;border:1px solid var(--line);transition:all .25s;cursor:default;}
@@ -82,6 +102,10 @@
     border-top:1px solid rgba(255,255,255,.12);border-bottom:1px solid rgba(255,255,255,.12);
     padding:20px 8px;margin:22px 0;text-align:center;}
   .contact b{color:var(--pink);}
+  .contact a{color:var(--pink);text-decoration:none;border-bottom:1px dashed var(--pink);}
+  .back{position:fixed;left:28px;bottom:22px;z-index:10;font-size:12px;letter-spacing:2px;
+    color:rgba(255,255,255,.55);cursor:pointer;border-bottom:1px solid transparent;transition:all .25s;}
+  .back:hover{color:var(--pink);border-bottom-color:var(--pink);}
 
   /* ============ 校园胶片放映厅 ============ */
   .cinema{margin:6px 0 22px;}
@@ -89,15 +113,7 @@
   .filmstrip{display:flex;gap:0;overflow-x:auto;overflow-y:hidden;
     scroll-snap-type:x mandatory;cursor:grab;user-select:none;
     background:#0d0709;border-radius:8px;padding:16px 0;
-    box-shadow:0 14px 40px rgba(0,0,0,.4);position:relative;
-    /* 胶片齿孔 */
-    background-image:
-      repeating-linear-gradient(90deg,transparent 0 14px,rgba(255,255,255,.28) 14px 26px,transparent 26px 40px),
-      linear-gradient(#0d0709,#0d0709);
-    background-size:100% 10px,100% 100%;
-    background-position:0 4px,0 0;
-    background-repeat:no-repeat;
-    scrollbar-width:none;}
+    box-shadow:0 14px 40px rgba(0,0,0,.4);position:relative;scrollbar-width:none;}
   .filmstrip::-webkit-scrollbar{display:none;}
   .filmstrip.dragging{cursor:grabbing;}
   .filmstrip::before,.filmstrip::after{content:"";position:absolute;left:0;right:0;height:10px;
@@ -107,27 +123,19 @@
   .filmstrip::after{bottom:4px;}
   .frame{flex:0 0 auto;scroll-snap-align:center;padding:0 8px;}
   .frame img,.frame video{height:min(300px,34vh);width:auto;max-width:78vw;
-    object-fit:cover;border-radius:3px;background:#000;
+    object-fit:cover;border-radius:3px;background:#000;display:block;
     box-shadow:0 4px 18px rgba(0,0,0,.5);
     transition:transform .35s var(--ease),box-shadow .35s var(--ease);}
   .frame img:hover,.frame video:hover{transform:scale(1.03) translateY(-3px);
     box-shadow:0 14px 34px rgba(209,106,138,.35);}
 
-  /* ============ 鼠标跟随粉色光晕 ============ */
-  .glow{position:fixed;left:0;top:0;width:340px;height:340px;border-radius:50%;
-    background:radial-gradient(circle,rgba(209,106,138,.16) 0%,rgba(209,106,138,.06) 40%,transparent 70%);
-    pointer-events:none;z-index:5;transform:translate(-50%,-50%);
-    transition:opacity .4s;mix-blend-mode:screen;}
-  @media (hover:none){.glow{display:none;}}
-
-  /* ============ 右侧进度导航（纯指示，不需点击）============ */
+  /* ============ 右侧进度 + 品牌 ============ */
   .progress{position:fixed;right:26px;top:50%;transform:translateY(-50%);
     display:flex;flex-direction:column;gap:16px;z-index:10;pointer-events:none;}
   .dot{width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(255,255,255,.35);
-    cursor:pointer;transition:all .35s var(--ease);position:relative;}
+    transition:all .35s var(--ease);}
   .dot.on{background:var(--pink);border-color:var(--pink);transform:scale(1.35);
     box-shadow:0 0 0 5px rgba(209,106,138,.18);}
-  .dot:hover{border-color:var(--pink);}
   .counter{position:fixed;right:24px;bottom:22px;z-index:10;font-family:var(--serif);
     color:rgba(255,255,255,.5);font-size:13px;letter-spacing:2px;}
   .counter b{color:var(--pink);font-size:20px;}
@@ -135,28 +143,33 @@
     letter-spacing:3px;font-size:14px;color:rgba(255,255,255,.65);}
   .brand b{color:var(--pink);}
 
-  /* 移动端 */
+  /* 移动端：分支改为纵向列表 */
   @media (max-width:760px){
-    #s1 .inner{flex-direction:column;justify-content:center;gap:26px;text-align:center;padding-top:60px;}
-    .desc{margin:14px auto 0;}
-    .cover-img{width:150px;}
+    .hub{height:auto;width:92vw;}
+    .hub-center{position:static;transform:none;display:flex;justify-content:center;}
+    .hub-caption{position:static;transform:none;margin:18px 0 8px;}
+    .node{position:static;transform:none;margin:10px 0;justify-content:center;width:100%;
+      animation:none;}
+    .node:hover{scale:1.02;}
     .progress{right:12px;}
     .counter,.brand{display:none;}
-    .inner{max-height:calc(100vh - 40px);}
-    .bgnum{font-size:60vw;}
+    .inner{max-height:calc(100vh - 32px);}
+    .back{bottom:10px;left:14px;}
   }
-  /* 打印：全部展开 */
   @media print{
     html,body{overflow:visible;height:auto;background:#fff;}
     .scenes{height:auto;}
     .scene{position:static;opacity:1 !important;visibility:visible !important;transform:none !important;
-      page-break-after:always;min-height:90vh;}
-    .scene .rv{opacity:1 !important;transform:none !important;}
-    .progress,.counter,.brand,.scroll-hint{display:none !important;}
-    h2,.cover-left h1{color:var(--ink) !important;}
-    .bgnum{display:none;}
-    .filmstrip{flex-wrap:wrap;overflow:visible;gap:12px;background:#fff;
-      background-image:none;justify-content:center;cursor:default;}
+      page-break-after:always;min-height:80vh;}
+    .rv{opacity:1 !important;transform:none !important;}
+    .progress,.counter,.brand,.glow,.back{display:none !important;}
+    h2,.hub-caption h1,.node .nm{color:var(--ink) !important;}
+    .hub{height:auto;}
+    .hub-center{position:static;transform:none;display:flex;justify-content:center;margin-bottom:16px;}
+    .hub-caption{position:static;transform:none;}
+    .node{position:static;transform:none;display:inline-flex;margin:6px;border-color:var(--line);
+      background:#faf6f8;animation:none;}
+    .filmstrip{flex-wrap:wrap;overflow:visible;gap:12px;background:#fff;justify-content:center;cursor:default;}
     .filmstrip::before,.filmstrip::after{display:none;}
     .frame img,.frame video{height:auto;max-width:44%;}
   }
@@ -165,49 +178,64 @@
 <body>
 
 <div class="brand">YI<b>·</b>XIANG <span style="opacity:.5;font-size:11px;">个人简历 2026</span></div>
+<div class="glow" id="glow"></div>
+<span class="back" id="back" onclick="go(0)">← 返回中心</span>
 
 <div class="scenes">
 
-  <!-- ========== SCENE 1 封面 ========== -->
+  <!-- ========== SCENE 1 中心：人物居中 + 四分支 ========== -->
   <section class="scene active" id="s1">
-    <div class="bgnum">01</div>
-    <div class="inner">
-      <div class="cover-left">
-        <div class="kicker rv">融合媒体及科技传播 · 中国香港</div>
-        <h1 class="rv">张宜翔<br><em>YI XIANG</em></h1>
-        <div class="subline rv">活动策划 / 新媒体运营 / 视频剪辑 / UX 内容创作</div>
-        <p class="desc rv">在艺术、传播与科技之间，持续寻找新的表达方式——把内容做出来，再让它被看见。</p>
+    <div class="hub">
+      <div class="hub-center">
+        <div class="avatar-ring"><img src="photo.jpg" alt="张宜翔"></div>
       </div>
-      <img class="cover-img rv st5" src="photo.jpg" alt="张宜翔">
+      <div class="hub-caption">
+        <h1>张宜翔</h1>
+        <div class="role">活动策划 · 新媒体运营 · 视频剪辑 · UX 内容创作</div>
+      </div>
+
+      <div class="node n-top" onclick="go(1)">
+        <span class="no">01</span>
+        <span><span class="nm">教育经历</span><small>EDUCATION</small></span>
+      </div>
+      <div class="node n-right" onclick="go(2)">
+        <span class="no">02</span>
+        <span><span class="nm">实习经历</span><small>INTERNSHIP</small></span>
+      </div>
+      <div class="node n-bottom" onclick="go(3)">
+        <span class="no">03</span>
+        <span><span class="nm">个人技能</span><small>SKILLS</small></span>
+      </div>
+      <div class="node n-left" onclick="go(4)">
+        <span class="no">04</span>
+        <span><span class="nm">联系方式</span><small>CONTACT</small></span>
+      </div>
     </div>
-    <div class="scroll-hint">SCROLL 向下滚动</div>
   </section>
 
-  <!-- ========== SCENE 2 教育背景 ========== -->
+  <!-- ========== SCENE 2 教育经历 ========== -->
   <section class="scene" id="s2">
-    <div class="bgnum">02</div>
     <div class="inner">
       <div class="crumb rv">CHAPTER 01 · EDUCATION</div>
       <h2 class="rv">香港恒生大学</h2>
       <div class="lede rv">融合媒体及科技传播 · 2020.08 – 2024.12 · 中国香港</div>
 
-      <!-- 校园胶片放映厅 -->
       <div class="cinema rv">
         <div class="cinema-label">-campus film- 校园胶片 · 拖动浏览</div>
         <div class="filmstrip" id="filmstrip">
-          <div class="frame"><img src="media/edu-1-graduation.jpg" alt="毕业袍合影" loading="lazy"></div>
-          <div class="frame"><img src="media/edu-2-seaside.jpg" alt="海边合影" loading="lazy"></div>
+          <div class="frame"><img src="media/edu-1-graduation.jpg" alt="毕业袍合影"></div>
+          <div class="frame"><img src="media/edu-2-seaside.jpg" alt="海边合影"></div>
           <div class="frame"><video src="media/edu-clip1.mov" controls preload="metadata" playsinline></video></div>
-          <div class="frame"><img src="media/edu-3-vintage.jpg" alt="中古店合影" loading="lazy"></div>
-          <div class="frame"><img src="media/edu-4-print.jpg" alt="拓印课堂" loading="lazy"></div>
-          <div class="frame"><img src="media/edu-5-greenscreen.jpg" alt="绿幕拍摄" loading="lazy"></div>
+          <div class="frame"><img src="media/edu-3-vintage.jpg" alt="中古店合影"></div>
+          <div class="frame"><img src="media/edu-4-print.jpg" alt="拓印课堂"></div>
+          <div class="frame"><img src="media/edu-5-greenscreen.jpg" alt="绿幕拍摄"></div>
           <div class="frame"><video src="media/edu-clip2.mov" controls preload="none" playsinline></video></div>
         </div>
       </div>
 
       <div class="card rv">
         <div class="title">HSUHK CSSA（内地学生会）— 宣传部部长</div>
-        <p style="font-size:14px;">从 0 到 1 策划多场大型活动的传播方案，确定了我喜欢"把内容做出来，再让它被看见"的全过程。</p>
+        <p>从 0 到 1 策划多场大型活动的传播方案，确定了我喜欢"把内容做出来，再让它被看见"的全过程。</p>
       </div>
       <div class="pull-quote rv">"把内容做出来，再让它被看见。"</div>
     </div>
@@ -215,7 +243,6 @@
 
   <!-- ========== SCENE 3 实习经历 ========== -->
   <section class="scene" id="s3">
-    <div class="bgnum">03</div>
     <div class="inner">
       <div class="crumb rv">CHAPTER 02 · INTERNSHIP</div>
       <h2 class="rv">四段实习，四种现场</h2>
@@ -262,12 +289,11 @@
     </div>
   </section>
 
-  <!-- ========== SCENE 4 技能与联系 ========== -->
+  <!-- ========== SCENE 4 个人技能 ========== -->
   <section class="scene" id="s4">
-    <div class="bgnum">04</div>
     <div class="inner">
-      <div class="crumb rv">CHAPTER 03 · SKILLS &amp; CONTACT</div>
-      <h2 class="rv">技能与联系方式</h2>
+      <div class="crumb rv">CHAPTER 03 · SKILLS</div>
+      <h2 class="rv">个人技能</h2>
       <div class="lede rv">技能不是清单，是被项目验证过的能力。</div>
 
       <div class="card rv">
@@ -287,63 +313,76 @@
         </ul>
       </div>
 
+      <div class="card rv">
+        <div class="title">能力自述</div>
+        <p>从选题调研、采访撰稿到视频剪辑、图文排版，我能独立完成一条内容从"想法"到"发布"的全流程；也习惯在多语言、多文化的环境中快速切换视角。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SCENE 5 联系方式 ========== -->
+  <section class="scene" id="s5">
+    <div class="inner">
+      <div class="crumb rv">CHAPTER 04 · CONTACT</div>
+      <h2 class="rv">联系方式</h2>
+      <div class="lede rv">期待与你共事，欢迎随时联系。</div>
+
       <div class="card contact rv">
-        <div class="title">求职意向 &amp; 联系方式</div>
+        <div class="title">求职意向</div>
+        <p>活动策划 / 新媒体运营 / 视频剪辑与后期 / UX 内容创作</p>
+      </div>
+
+      <div class="card contact rv">
+        <div class="title">联系我</div>
         <ul>
-          <li>方向：<b>活动策划 / 新媒体运营 / 视频剪辑与后期 / UX 内容创作</b></li>
-          <li>邮箱：<b>zyxiang0703@gmail.com</b></li>
-          <li>GitHub：<b>github.com/Zyxiang0703</b></li>
+          <li>邮箱：<b><a href="mailto:zyxiang0703@gmail.com">zyxiang0703@gmail.com</a></b></li>
+          <li>GitHub：<b><a href="https://github.com/Zyxiang0703" target="_blank" rel="noopener">github.com/Zyxiang0703</a></b></li>
+          <li>在线简历：<b><a href="https://zyxiang0703.github.io" target="_blank" rel="noopener">zyxiang0703.github.io</a></b></li>
           <li>可附加作品集链接（视频 / 设计 / 公众号）</li>
         </ul>
       </div>
+
       <div class="pull-quote rv">THANKS FOR SCROLLING · 期待与你共事</div>
     </div>
   </section>
 
 </div>
 
-<!-- 鼠标跟随光晕 -->
-<div class="glow" id="glow"></div>
-
-<!-- 右侧进度导航 -->
 <nav class="progress" id="progress"></nav>
-<div class="counter"><b id="cur">01</b> / 04</div>
+<div class="counter"><b id="cur">01</b> / 05</div>
 
 <script>
-  // 鼠标跟随粉色光晕（平滑缓动跟随）
+  // 鼠标跟随粉色光晕
   const glow=document.getElementById('glow');
   let mx=innerWidth/2,my=innerHeight/2,gx=mx,gy=my;
   window.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
   (function loop(){
-    gx+=(mx-gx)*0.08; gy+=(my-gy)*0.08;   // 缓动：光晕慢慢追上鼠标
+    gx+=(mx-gx)*0.08; gy+=(my-gy)*0.08;
     glow.style.left=gx+'px'; glow.style.top=gy+'px';
     requestAnimationFrame(loop);
   })();
 
-  // 胶片拖动浏览（鼠标按住左右拖）
+  // 胶片拖动浏览
   const strip=document.getElementById('filmstrip');
   let down=false,sx=0,sl=0,moved=false;
   strip.addEventListener('mousedown',e=>{
-    if(e.target.tagName==='VIDEO')return; // 不干扰视频控制条
-    down=true;moved=false;sx=e.pageX;sl=strip.scrollLeft;
-    strip.classList.add('dragging');
+    if(e.target.tagName==='VIDEO')return;
+    down=true;moved=false;sx=e.pageX;sl=strip.scrollLeft;strip.classList.add('dragging');
   });
   window.addEventListener('mousemove',e=>{
     if(!down)return;
-    const dx=e.pageX-sx;
-    if(Math.abs(dx)>4)moved=true;
+    const dx=e.pageX-sx;if(Math.abs(dx)>4)moved=true;
     strip.scrollLeft=sl-dx;
   });
   window.addEventListener('mouseup',()=>{down=false;strip.classList.remove('dragging');});
-  // 防止拖动结束时误触
   strip.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();moved=false;}},true);
 
+  // 场景切换
   const scenes=[...document.querySelectorAll('.scene')];
-  const names=['封面','教育背景','实习经历','技能与联系'];
+  const names=['中心','教育经历','实习经历','个人技能','联系方式'];
   let cur=0,locked=false;
-  const LOCK=950; // 换幕动画期间的锁，防止连滚跳页
+  const LOCK=950;
 
-  // 生成右侧圆点（纯指示器）
   const nav=document.getElementById('progress');
   scenes.forEach((s,i)=>{
     const d=document.createElement('div');
@@ -352,8 +391,9 @@
     nav.appendChild(d);
   });
   const dots=[...nav.children];
+  const back=document.getElementById('back');
 
-  function go(n){
+  window.go=function(n){
     n=Math.max(0,Math.min(scenes.length-1,n));
     if(n===cur||locked)return;
     locked=true;
@@ -363,24 +403,24 @@
     setTimeout(()=>oldS.classList.remove('leaving'),800);
     dots.forEach((d,i)=>d.classList.toggle('on',i===n));
     document.getElementById('cur').textContent=String(n+1).padStart(2,'0');
+    back.style.display=n===0?'none':'block';
     cur=n;
     setTimeout(()=>locked=false,LOCK);
-  }
+  };
+  back.style.display='none';
 
-  // 关键：滚轮驱动换幕。若当前场景内容可滚动且未到边缘，先滚内容
   function innerOf(i){return scenes[i].querySelector('.inner');}
   window.addEventListener('wheel',e=>{
     if(locked)return;
     const box=innerOf(cur);
     if(box && box.scrollHeight>box.clientHeight+4){
       const atTop=box.scrollTop<=0, atBottom=box.scrollTop+box.clientHeight>=box.scrollHeight-2;
-      if((e.deltaY>0&&!atBottom)||(e.deltaY<0&&!atTop))return; // 交给内容滚动
+      if((e.deltaY>0&&!atBottom)||(e.deltaY<0&&!atTop))return;
     }
-    if(Math.abs(e.deltaY)<25)return; // 过滤轻微滚动
+    if(Math.abs(e.deltaY)<25)return;
     go(cur+(e.deltaY>0?1:-1));
   },{passive:true});
 
-  // 触屏滑动
   let ty=null;
   window.addEventListener('touchstart',e=>{ty=e.touches[0].clientY;},{passive:true});
   window.addEventListener('touchend',e=>{
@@ -395,12 +435,10 @@
     go(cur+(dy>0?1:-1));ty=null;
   },{passive:true});
 
-  // 键盘
   document.addEventListener('keydown',e=>{
     if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1);}
     if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(cur-1);}
-    if(e.key==='Home')go(0);
-    if(e.key==='End')go(scenes.length-1);
+    if(e.key==='Escape')go(0);
   });
 </script>
 </body>
