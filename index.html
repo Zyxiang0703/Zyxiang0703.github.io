@@ -166,6 +166,57 @@
     letter-spacing:3px;font-size:14px;color:rgba(255,255,255,.65);}
   .brand b{color:var(--pink);}
 
+  /* ============ 滚动浮现（下滑加载）============ */
+  .sr{opacity:0;transform:translateY(42px);transition:opacity .85s var(--ease),transform .85s var(--ease);}
+  .sr.in{opacity:1;transform:none;}
+
+  /* CSSA 板块：logo + 拍立得照片墙 */
+  .cssa-head{display:flex;align-items:center;gap:18px;margin:10px 0 6px;}
+  .cssa-head img{width:clamp(72px,9vw,100px);flex-shrink:0;
+    filter:drop-shadow(0 10px 22px rgba(209,106,138,.25));}
+  .cssa-head .tt{font-family:var(--serif);font-size:clamp(19px,2.2vw,25px);color:#fff;}
+  .cssa-head .tt b{color:var(--pink);}
+  .cssa-head .st{font-size:12px;letter-spacing:3px;color:var(--muted);margin-top:4px;}
+  /* Trionn 式部长视频卡片 */
+  .leader-card{position:relative;width:min(430px,86%);margin:18px auto 8px;border-radius:26px;
+    overflow:hidden;aspect-ratio:4/5;background:#241a1f;
+    box-shadow:0 24px 70px rgba(0,0,0,.5),0 0 0 1px rgba(209,106,138,.22);
+    transform:rotate(-1.2deg);transition:transform .5s var(--ease),box-shadow .5s var(--ease);}
+  .leader-card:hover{transform:rotate(0) scale(1.015);box-shadow:0 30px 90px rgba(0,0,0,.55),0 0 0 1px rgba(209,106,138,.45);}
+  .leader-card video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+  .lc-veil{position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(20,12,16,.55) 0%,rgba(20,12,16,0) 32%,rgba(20,12,16,0) 55%,rgba(20,12,16,.72) 100%);}
+  .lc-top{position:absolute;top:22px;left:26px;font-size:12px;letter-spacing:5px;color:rgba(255,255,255,.92);}
+  .lc-bottom{position:absolute;left:26px;right:26px;bottom:22px;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;}
+  .lc-title{font-family:var(--serif);font-size:clamp(20px,3.4vw,27px);line-height:1.35;color:#fff;
+    text-shadow:0 2px 18px rgba(0,0,0,.45);}
+  .lc-title b{color:var(--pink);}
+  .lc-title small{display:block;font-family:var(--sans);font-size:11px;letter-spacing:3px;color:rgba(255,255,255,.72);margin-top:8px;}
+  .lc-stat{font-size:clamp(30px,5vw,44px);font-weight:700;color:rgba(255,255,255,.94);line-height:1;flex-shrink:0;}
+  .lc-stat i{font-style:normal;color:var(--pink);}
+  /* 语音字幕条 */
+  .lc-sub{position:absolute;left:50%;bottom:96px;transform:translateX(-50%) translateY(8px);
+    background:rgba(16,9,13,.74);backdrop-filter:blur(6px);border:1px solid rgba(209,106,138,.42);
+    padding:9px 22px;border-radius:999px;white-space:nowrap;pointer-events:none;
+    font-size:clamp(15px,2.3vw,20px);letter-spacing:2.5px;color:#fff;
+    opacity:0;transition:opacity .35s var(--ease),transform .35s var(--ease);
+    box-shadow:0 8px 28px rgba(0,0,0,.35);}
+  .lc-sub b{color:var(--pink);}
+  .lc-sub.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .leader-card{cursor:pointer;}
+  .polaroids{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;
+    gap:2px;padding:14px 0 10px;}
+  .polaroid{background:#fff;padding:9px 9px 30px;margin:0 6px 14px;
+    box-shadow:0 12px 30px rgba(0,0,0,.35);
+    transform:rotate(var(--r,0deg));transition:transform .35s var(--ease),box-shadow .35s var(--ease);
+    position:relative;}
+  .polaroid:hover{transform:rotate(0deg) scale(1.05);z-index:6;
+    box-shadow:0 18px 44px rgba(209,106,138,.35);}
+  .polaroid img{height:clamp(120px,15vw,170px);width:auto;max-width:60vw;display:block;}
+  .polaroid figcaption{font-size:11.5px;color:#9a8590;text-align:center;padding-top:8px;letter-spacing:1px;}
+  .polaroid .tape{position:absolute;top:-10px;left:50%;transform:translateX(-50%) rotate(-2deg);
+    width:74px;height:20px;background:rgba(209,106,138,.4);}
+
   /* 移动端：分支改为纵向列表 */
   @media (max-width:760px){
     .mascot-cover{left:auto;right:2%;bottom:-4px;}
@@ -190,6 +241,10 @@
     .progress,.counter,.brand,.glow,.back{display:none !important;}
     #loader{display:none !important;}
     .mascot-cover{display:none !important;}
+    .leader-card video{display:none !important;}
+    .leader-card{background:#efe6ea !important;transform:none;}
+    .leader-card .lc-title,.leader-card .lc-stat{color:var(--ink) !important;}
+    .leader-card .lc-top,.leader-card .lc-title small{color:var(--muted) !important;}
     h2,.hub-caption h1,.node .nm{color:var(--ink) !important;}
     .hub{height:auto;}
     .hub-center{position:static;transform:none;display:flex;justify-content:center;margin-bottom:16px;}
@@ -269,9 +324,47 @@
         </div>
       </div>
 
-      <div class="card rv">
-        <div class="title">HSUHK CSSA（内地学生会）— 宣传部部长</div>
-        <p>从 0 到 1 策划多场大型活动的传播方案，确定了我喜欢"把内容做出来，再让它被看见"的全过程。</p>
+      <!-- CSSA 板块：向下滚动时浮现 -->
+      <div class="sr">
+        <div class="cssa-head">
+          <img src="media/cssa-logo.png" alt="HSUHK CSSA">
+          <div>
+            <div class="tt">HSUHK CSSA（内地学生会）— <b>宣传部部长</b></div>
+            <div class="st">从 0 到 1 策划大型活动的传播方案 · 内容编辑 / 视频剪辑 / 三平台运营</div>
+          </div>
+        </div>
+        <div class="leader-card" id="leaderCard" title="点击开启 / 静音">
+          <video id="speechVid" src="media/leader-speech.mp4" autoplay muted loop playsinline preload="metadata"></video>
+          <div class="lc-veil"></div>
+          <div class="lc-top">CAMPUS LEADERSHIP</div>
+          <div class="lc-sub" id="lcSub">欢迎加入<b>内地学生会</b></div>
+          <div class="lc-bottom">
+            <div class="lc-title">香港恒生大学内地学生会<br><b>宣传部部长</b><small>HSUHK CSSA · PUBLICITY DEPARTMENT</small></div>
+            <div class="lc-stat">C<i>S</i>SA</div>
+          </div>
+        </div>
+        <div class="polaroids">
+          <figure class="polaroid" style="--r:-4deg;">
+            <span class="tape"></span>
+            <img src="media/cssa-1.jpg" alt="讲座合影" loading="lazy">
+            <figcaption>宣讲会合影</figcaption>
+          </figure>
+          <figure class="polaroid" style="--r:3deg;">
+            <span class="tape"></span>
+            <img src="media/cssa-2.jpg" alt="工作日常" loading="lazy">
+            <figcaption>工作日常</figcaption>
+          </figure>
+          <figure class="polaroid" style="--r:-2.5deg;">
+            <span class="tape"></span>
+            <img src="media/cssa-3.jpg" alt="团建时刻" loading="lazy">
+            <figcaption>团建时刻</figcaption>
+          </figure>
+          <figure class="polaroid" style="--r:4deg;">
+            <span class="tape"></span>
+            <img src="media/cssa-4.jpg" alt="部门全家福" loading="lazy">
+            <figcaption>部门全家福</figcaption>
+          </figure>
+        </div>
       </div>
       <div class="pull-quote rv">"把内容做出来，再让它被看见。"</div>
     </div>
@@ -443,6 +536,26 @@
   });
   window.addEventListener('mouseup',()=>{down=false;strip.classList.remove('dragging');});
   strip.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();moved=false;}},true);
+
+  // 滚动浮现：下滑到可视区域时加载
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+    });
+  },{threshold:0.12});
+  document.querySelectorAll('.sr').forEach(el=>io.observe(el));
+
+  // 部长视频：字幕同步 + 点击开关声音
+  const sv=document.getElementById('speechVid'), sp=document.getElementById('lcSub');
+  if(sv&&sp){
+    sv.addEventListener('timeupdate',()=>{
+      sp.classList.toggle('show',sv.currentTime>0.55&&sv.currentTime<4.75);
+    });
+    document.getElementById('leaderCard').addEventListener('click',()=>{
+      sv.muted=!sv.muted;
+      if(!sv.muted){sv.currentTime=0;sv.play();}
+    });
+  }
 
   // 场景切换
   const scenes=[...document.querySelectorAll('.scene')];
