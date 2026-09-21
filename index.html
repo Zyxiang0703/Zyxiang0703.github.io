@@ -204,6 +204,41 @@
   .lc-sub b{color:var(--pink);}
   .lc-sub.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .leader-card{cursor:pointer;}
+  /* ============ 技能场景：3D 模型 + 环绕标签 ============ */
+  .skill-stage{position:relative;width:min(760px,94vw);margin:6px auto 10px;aspect-ratio:1/1;
+    max-height:56vh;}
+  .skill-orbit{position:absolute;inset:0;z-index:2;}
+  .oz{position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);
+    white-space:nowrap;padding:8px 16px;border-radius:999px;font-size:12.5px;letter-spacing:.5px;
+    color:#fff;background:rgba(255,255,255,.06);border:1px solid rgba(209,106,138,.42);
+    backdrop-filter:blur(6px);transition:background .3s var(--ease),border-color .3s var(--ease),box-shadow .3s var(--ease);
+    animation:ozFloat 6s ease-in-out infinite;animation-delay:var(--d);}
+  .oz:hover{background:var(--pink);border-color:var(--pink);box-shadow:0 10px 26px rgba(209,106,138,.4);}
+  @keyframes ozFloat{0%,100%{transform:translate(-50%,-50%) translateY(0);}50%{transform:translate(-50%,-50%) translateY(-9px);}}
+  .model-box{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:50%;aspect-ratio:1/1;border-radius:26px;overflow:hidden;background:#1a1016;
+    box-shadow:0 26px 70px rgba(0,0,0,.55),0 0 0 1px rgba(209,106,138,.3);z-index:3;}
+  .model-box iframe{width:100%;height:100%;border:0;display:block;}
+  .model-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:12px;letter-spacing:2px;color:rgba(255,255,255,.4);}
+  .model-hit{position:absolute;inset:0;z-index:4;cursor:pointer;
+    transition:opacity .5s var(--ease);}
+  .model-box::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;
+    background:radial-gradient(circle at 50% 48%,rgba(209,106,138,.16),transparent 65%);}
+  .model-pulse{position:absolute;left:50%;top:50%;width:50%;aspect-ratio:1/1;border-radius:28px;
+    transform:translate(-50%,-50%);pointer-events:none;z-index:2;
+    border:1px solid rgba(209,106,138,.55);animation:mpulse 2.6s infinite var(--ease);}
+  @keyframes mpulse{0%{transform:translate(-50%,-50%) scale(1);opacity:.85;}70%{transform:translate(-50%,-50%) scale(1.14);opacity:0;}100%{opacity:0;}}
+  .model-hint{position:absolute;left:50%;top:calc(50% + 25.5% + 18px);transform:translateX(-50%);z-index:5;
+    white-space:nowrap;font-size:11.5px;letter-spacing:2.5px;color:var(--pink);
+    pointer-events:none;transition:opacity .4s var(--ease);text-shadow:0 2px 12px rgba(0,0,0,.5);}
+  .skill-stage.open .model-hit{opacity:0;pointer-events:none;}
+  .skill-stage.open .model-hint{opacity:0;}
+  .skill-stage.open .model-pulse{display:none;}
+  .reveal-wrap{max-height:0;opacity:0;overflow:hidden;
+    transition:max-height .8s var(--ease),opacity .6s var(--ease),margin-top .6s var(--ease);}
+  .reveal-wrap .card{margin-top:14px;}
+  .skill-stage.open + .reveal-wrap{max-height:1400px;opacity:1;margin-top:34px;}
   .polaroids{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;
     gap:2px;padding:14px 0 10px;}
   .polaroid{background:#fff;padding:9px 9px 30px;margin:0 6px 14px;
@@ -231,6 +266,13 @@
     .counter,.brand{display:none;}
     .inner{max-height:calc(100vh - 32px);}
     .back{bottom:10px;left:14px;}
+    /* 技能场景移动端：标签改为普通标签行 */
+    .skill-stage{aspect-ratio:auto;max-height:none;}
+    .skill-orbit{position:static;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:18px;}
+    .oz{position:static;transform:none;animation:none;}
+    .model-box{position:static;transform:none;width:min(320px,82%);margin:0 auto;}
+    .model-hint{position:static;transform:none;text-align:center;margin-top:12px;}
+    .model-pulse{display:none;}
   }
   @media print{
     html,body{overflow:visible;height:auto;background:#fff;}
@@ -245,6 +287,10 @@
     .leader-card{background:#efe6ea !important;transform:none;}
     .leader-card .lc-title,.leader-card .lc-stat{color:var(--ink) !important;}
     .leader-card .lc-top,.leader-card .lc-title small{color:var(--muted) !important;}
+    .model-box,.model-hint,.model-pulse{display:none !important;}
+    .skill-orbit{position:static;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+    .oz{position:static;transform:none;animation:none;color:var(--ink) !important;border-color:var(--line);background:#faf6f8;}
+    .reveal-wrap{max-height:none !important;opacity:1 !important;margin-top:20px !important;}
     h2,.hub-caption h1,.node .nm{color:var(--ink) !important;}
     .hub{height:auto;}
     .hub-center{position:static;transform:none;display:flex;justify-content:center;margin-bottom:16px;}
@@ -425,26 +471,43 @@
       <h2 class="rv">个人技能</h2>
       <div class="lede rv">技能不是清单，是被项目验证过的能力。</div>
 
-      <div class="card rv">
-        <div class="title">技能标签</div>
-        <div class="tags">
-          <span>剪映</span><span>Premiere</span><span>Photoshop</span><span>CapCut</span>
-          <span>Excel 数据可视化</span><span>PowerPoint</span><span>公众号运营</span>
-          <span>活动策划</span><span>采访撰稿</span><span>英语工作语言</span>
+      <div class="skill-stage rv" id="skillStage">
+        <div class="skill-orbit">
+          <span class="oz" style="--x:50%;--y:8%;--d:0s;">剪映</span>
+          <span class="oz" style="--x:74%;--y:16%;--d:.6s;">Premiere</span>
+          <span class="oz" style="--x:91%;--y:37%;--d:1.2s;">Photoshop</span>
+          <span class="oz" style="--x:91%;--y:63%;--d:1.8s;">CapCut</span>
+          <span class="oz" style="--x:74%;--y:84%;--d:2.4s;">Excel 数据可视化</span>
+          <span class="oz" style="--x:50%;--y:92%;--d:3s;">PowerPoint</span>
+          <span class="oz" style="--x:26%;--y:84%;--d:3.6s;">公众号运营</span>
+          <span class="oz" style="--x:9%;--y:63%;--d:4.2s;">活动策划</span>
+          <span class="oz" style="--x:9%;--y:37%;--d:4.8s;">采访撰稿</span>
+          <span class="oz" style="--x:26%;--y:16%;--d:5.4s;">英语工作语言</span>
         </div>
+
+        <div class="model-box">
+          <div class="model-fallback">3D 模型加载中…</div>
+          <iframe title="3D 模型" loading="lazy" allow="autoplay; fullscreen; xr-spatial-tracking" execution-while-out-of-viewport execution-while-not-rendered web-share
+            src="https://sketchfab.com/models/49215fd13b9849c4a2c939e1cefa1e6c/embed?autospin=0.35&autostart=1&preload=1&ui_theme=dark&ui_infos=0&ui_watermark=0&ui_controls=1&ui_stop=0&dnt=1"></iframe>
+          <div class="model-hit" id="modelHit"></div>
+          <div class="model-hint" id="modelHint">点击模型 · 展开校园活动与自述</div>
+        </div>
+        <div class="model-pulse"></div>
       </div>
 
-      <div class="card rv">
-        <div class="title">校园活动</div>
-        <ul>
-          <li>协同策划年兽活动、新春游园夜市、春节联欢晚会等大型活动，负责前期策划与后期复盘。</li>
-          <li>负责小红书、抖音、微信公众号的内容编辑、视频剪辑与审核。</li>
-        </ul>
-      </div>
+      <div class="reveal-wrap" id="revealWrap">
+        <div class="card">
+          <div class="title">校园活动</div>
+          <ul>
+            <li>协同策划年兽活动、新春游园夜市、春节联欢晚会等大型活动，负责前期策划与后期复盘。</li>
+            <li>负责小红书、抖音、微信公众号的内容编辑、视频剪辑与审核。</li>
+          </ul>
+        </div>
 
-      <div class="card rv">
-        <div class="title">能力自述</div>
-        <p>从选题调研、采访撰稿到视频剪辑、图文排版，我能独立完成一条内容从"想法"到"发布"的全流程；也习惯在多语言、多文化的环境中快速切换视角。</p>
+        <div class="card">
+          <div class="title">能力自述</div>
+          <p>从选题调研、采访撰稿到视频剪辑、图文排版，我能独立完成一条内容从"想法"到"发布"的全流程；也习惯在多语言、多文化的环境中快速切换视角。</p>
+        </div>
       </div>
     </div>
   </section>
@@ -554,6 +617,19 @@
     document.getElementById('leaderCard').addEventListener('click',()=>{
       sv.muted=!sv.muted;
       if(!sv.muted){sv.currentTime=0;sv.play();}
+    });
+  }
+
+  // 技能场景：点击 3D 模型展开校园活动与能力自述
+  const stage=document.getElementById('skillStage');
+  if(stage){
+    document.getElementById('modelHit').addEventListener('click',()=>{
+      stage.classList.add('open');
+      /** 展开后让 iframe 可交互（可拖动旋转模型） */
+      setTimeout(()=>{
+        const w=document.getElementById('revealWrap');
+        if(w) w.scrollIntoView({behavior:'smooth',block:'nearest'});
+      },260);
     });
   }
 
