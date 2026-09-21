@@ -216,7 +216,7 @@
   .oz:hover{background:var(--pink);border-color:var(--pink);box-shadow:0 10px 26px rgba(209,106,138,.4);}
   @keyframes ozFloat{0%,100%{transform:translate(-50%,-50%) translateY(0);}50%{transform:translate(-50%,-50%) translateY(-9px);}}
   .model-box{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-    width:50%;aspect-ratio:1/1;border-radius:26px;overflow:hidden;background:#1a1016;
+    width:50%;aspect-ratio:1/1;border-radius:26px;overflow:hidden;background:rgba(255,255,255,.03);
     box-shadow:0 26px 70px rgba(0,0,0,.55),0 0 0 1px rgba(209,106,138,.3);z-index:3;}
   .model-box iframe{width:100%;height:100%;border:0;display:block;}
   .model-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
@@ -488,7 +488,7 @@
         <div class="model-box">
           <div class="model-fallback">3D 模型加载中…</div>
           <iframe title="3D 模型" loading="lazy" allow="autoplay; fullscreen; xr-spatial-tracking" execution-while-out-of-viewport execution-while-not-rendered web-share
-            src="https://sketchfab.com/models/49215fd13b9849c4a2c939e1cefa1e6c/embed?autospin=0.35&autostart=1&preload=1&ui_theme=dark&ui_infos=0&ui_watermark=0&ui_controls=1&ui_stop=0&dnt=1"></iframe>
+            src="https://sketchfab.com/models/49215fd13b9849c4a2c939e1cefa1e6c/embed?autospin=0.35&autostart=1&preload=1&transparent=1&ui_theme=dark&ui_infos=0&ui_watermark=0&ui_controls=1&ui_stop=0&ui_hint=0&dnt=1"></iframe>
           <div class="model-hit" id="modelHit"></div>
           <div class="model-hint" id="modelHint">点击模型 · 展开校园活动与自述</div>
         </div>
